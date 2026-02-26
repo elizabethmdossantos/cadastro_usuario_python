@@ -1,0 +1,10 @@
+[
+    {
+        "id": "bb92c9ea-e858-4f90-920d-12e897333ead",
+        "nome": "elizabeth santos",
+        "cpf": "12547896325",
+        "email": "email@email.com",
+        "idade": "25",
+        "senha": "scrypt:32768:8:1$KlSw8GE5gb06rkV2$50e69a38bde2c940060fca89f3b2c85603c07193311bc740201628fbe4dacdf1d5c00250fe800875474915238966203ad4e483aa1b21a9e3493be824e00f14c3"
+    }
+]

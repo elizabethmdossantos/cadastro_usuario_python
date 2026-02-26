@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuários</title>
+    <link rel="stylesheet" href="/static/usuarios.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Usuários Cadastrados</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <!-- CPF agora mostrado como identificador único -->
+                    <th>CPF</th>
+                    <th>E-mail</th>
+                    <th>Idade</th>
+                    <th>Senha</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.nome }}</td>
+                    <td>{{ usuario.cpf }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.idade }}</td>
+                    <td>{{ usuario.senha }}</td>
+                    <td>
+                        <form action="{{ url_for('deletar_usuario', cpf=usuario.cpf) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');">
+                            <input type="hidden" name="cpf" value="{{ usuario.cpf }}">
+                            <button type="submit" class="delete-button">Deletar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
