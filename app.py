@@ -58,6 +58,7 @@ def mostrar_cadastro():
 def login():
     cpf = request.form.get("cpf")
     senha = request.form.get("senha")
+    senha_hash = generate_password_hash(senha)
 
     usuarios = carregar_usuarios()
     usuario = next((u for u in usuarios if u.get("cpf") == cpf), None) # Busca o usuário com o CPF fornecido, ou None se não encontrado
@@ -100,7 +101,7 @@ def cadastrar_usuario():
         "senha": senha_hash,
     }
 
-        if not idade or int(idade) < 18:
+    if not idade or int(idade) < 18:
         flash("Idade mínima para cadastro é 18 anos.", "erro")
         return render_template('cadastro-usuario.html', form_data=request.form)
 

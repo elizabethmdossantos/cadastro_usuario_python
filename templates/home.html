@@ -3,29 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Usuários</title>
+    <title>Home</title>
     <link rel="stylesheet" href="/static/home.css">
 </head>
 <body>
     <div class="container">
+        <form action="">
         <h1>Bem-vindo</h1>
-        <p class="subtitle">Escolha uma opção para continuar:</p>
         
-        <div class="button-group">
-           <!-- <form action="/login" method="POST" style="display: inline-flex;">
-                <button type="submit" class="login-button">Login</button>
-            </form>
-            
-            <form action="/cadastrar-usuario" method="POST" style="display: inline-flex;">
-                <button type="submit" class="cadastrar-button">Cadastrar</button>
-            </form>-->
-
-            <!-- LOGIN - GET para mostrar formulário -->
-            <a href="{{ url_for('mostrar_login') }}" class="login-button">Login</a>
-            
-            <!-- CADASTRO - GET para mostrar formulário -->
-            <a href="{{ url_for('mostrar_cadastro') }}" class="cadastrar-button">Cadastrar</a>
-
+        
+        <div class="button">
+            <p class="subtitle">Faça login para continuar: </p>
+            <button><a href="{{ url_for('mostrar_login') }}" class="login-button">Login</a></button><br><br>
+            <p class="subtitle">Cadastrar usuário: </p>
+            <button><a href="{{ url_for('mostrar_cadastro') }}" class="cadastrar-button">Cadastrar</a></button>
+        </form>
         </div>
     </div>
 </body>

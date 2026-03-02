@@ -14,9 +14,9 @@ body {
     padding: 30px;
 }
 
-form {
+.container {
     width: 100%;
-    max-width: 900px;
+    max-width: 420px;
     padding: 35px;
     background: #ffffff;
     border-radius: 12px;
@@ -28,6 +28,15 @@ form h1 {
     margin-bottom: 25px;
     color: #111827;
     font-size: 22px;
+}
+
+a{
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 14px;
 }
 
 label {

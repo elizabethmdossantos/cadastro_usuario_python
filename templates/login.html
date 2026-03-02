@@ -19,10 +19,35 @@
 
     <form method="POST" action="{{ url_for('login') }}">
         <h1>Login</h1>
+        <label for="cpf">CPF:</label>
         <input type="text" name="cpf" value="{{ form_data.cpf if form_data else '' }}" placeholder="Digite seu CPF">
-        <input type="password" name="senha" value="{{ form_data.senha if form_data else '' }}" placeholder="Digite sua senha">
+        
+        <label for="senha">Senha:</label>
+        <div class="password-field">
+        <input type="password" id="senha" name="senha" value="{{ form_data.senha if form_data else '' }}" placeholder="Digite sua senha">
+            <span id="toggleSenha" class="toggle-password" title="Mostrar senha">
+                <svg xmlns="http://www.w3.org/2000/svg&quot; width="20" height="20"
+                        viewBox="0 0 24 24" fill="none"
+                        stroke="#374151" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+            </span>
+        </div>
         <button type="submit">Entrar</button>
+        <a href="{{ url_for('home') }}">Voltar a página home</a>
     </form>
     </div>
+    <script>
+        const senhaInput = document.getElementById('senha');
+        const toggle = document.getElementById('toggleSenha');
+        const eyeIcon = document.createElement('svg');
+        toggle.addEventListener('click', function(){
+            const visivel = senhaInput.getAttribute('type') === 'text';
+            senhaInput.type = visivel ? 'password' : 'text';
+            eyeIcon.setAttribute('stroke', visivel ? '#374151' : '#2563eb');
+        });
+    </script>
 </body>
 </html>
