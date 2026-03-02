@@ -1,10 +1,114 @@
-button{
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
+* {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1f2937, #111827);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #111827;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #2563eb, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .login-button, .cadastrar-button {
+            flex: 1;
+            min-width: 180px;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-button {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+        }
+
+        .cadastrar-button {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            box-shadow: 0 10px 30px rgba(5, 150, 105, 0.4);
+        }
+
+        .login-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.5);
+        }
+
+        .cadastrar-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(5, 150, 105, 0.5);
+        }
+
+        .login-button:active, .cadastrar-button:active {
+            transform: translateY(-2px);
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 40px 30px;
+                margin: 10px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .login-button, .cadastrar-button {
+                min-width: 100%;
+            }
+        }
+        .flash { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .sucesso { background: #d4edda; color: #155724; }
+        .erro { background: #f8d7da; color: #721c24; }

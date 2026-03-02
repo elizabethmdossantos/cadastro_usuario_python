@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash  # flash para mensagens de feedback
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 import json
 import os
 import uuid  # usado para gerar IDs únicos (uuid4)
@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 # chave necessária para utilizar `flash` e sessões
 app.secret_key = "chave-super-secreta"
+
 
 def carregar_usuarios():
     # Verifica se o arquivo 'usuarios.json' existe e carrega os dados
@@ -35,10 +36,23 @@ def salvar_usuario(usuario):
     except:
         return False  # Retorna False se ocorrer um erro ao salvar
 
+
+
 @app.route("/")
 def home():
     # Renderiza a página inicial com o formulário de cadastro
+    return render_template("home.html")
+
+# ADICIONE estas rotas ANTES da rota /login POST existente:
+
+@app.route("/login", methods=["GET"])
+def mostrar_login():
+    return render_template("login.html")
+
+@app.route("/cadastro-usuario", methods=["GET"])
+def mostrar_cadastro():
     return render_template("cadastro-usuario.html")
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -46,14 +60,15 @@ def login():
     senha = request.form.get("senha")
 
     usuarios = carregar_usuarios()
-    usuario = next((u for u in usuarios if u.get("cpf") == cpf), None)
+    usuario = next((u for u in usuarios if u.get("cpf") == cpf), None) # Busca o usuário com o CPF fornecido, ou None se não encontrado
 
-    if usuario and check_password_hash(usuario.get("senha"), senha):
-        flash("Login bem-sucedido!", "sucesso")
+    if usuario and check_password_hash(usuario.get("senha"), senha): # Verifica se o usuário existe e se a senha fornecida corresponde ao hash armazenado
+        flash("Login bem-sucedido!", "sucesso") 
         return redirect(url_for('buscar_usuarios'))
     else:
         flash("CPF ou senha incorretos.", "erro")
-        return redirect(url_for('home'))
+        '''return redirect(url_for('login'))''' 
+        return render_template('login.html', form_data=request.form) # Mantém os dados do formulário para facilitar correção pelo usuário
 
 @app.route("/cadastro-usuario", methods=["POST"])
 def cadastrar_usuario():
@@ -71,7 +86,9 @@ def cadastrar_usuario():
     # evita inserir CPF repetido
     if any(u.get("cpf") == cpf for u in usuarios):
         flash("CPF já cadastrado no sistema.", "erro")
-        return redirect(url_for("home"))
+        '''return redirect(url_for("home")) #antes'''
+        return render_template('cadastro-usuario.html', form_data=request.form) # Mantém os dados do formulário para facilitar correção pelo usuário
+
 
     # cria o objeto do usuário, incluindo um id UUID
     usuario = {
@@ -95,8 +112,6 @@ def cadastrar_usuario():
         flash("Não foi possível cadastrar o usuário.", "erro")
         return redirect(url_for('home'))
 
-
-
 @app.route("/usuarios/json", methods=["GET"])
 def buscar_usuarios_json():
     usuarios = carregar_usuarios()
@@ -109,22 +124,23 @@ def buscar_usuarios():
 
 @app.route("/deletar/<cpf>", methods=["POST"])
 def deletar_usuario(cpf):
-    cpf = request.form.get("cpf")
+    '''cpf = request.form.get("cpf")'''  # Obtém o CPF do formulário, mas já temos o CPF na URL
     if not cpf:
         flash("CPF necessário para deletar usuário.", "erro")
         return redirect(url_for("buscar_usuarios"))
     
     usuarios = carregar_usuarios()
-    novo_usuarios = [u for u in usuarios if u.get("cpf") == cpf]
-
+    novos_usuarios = [u for u in usuarios if u.get("cpf") != cpf]
+    
     try:
-        with open ("usuarios.json", "w", encoding="utf-8") as arquivo:
-            json.dump(novo_usuarios, arquivo, indent=4)
+        with open("usuarios.json", "w", encoding="utf-8") as arquivo:
+            json.dump(novos_usuarios, arquivo, indent=4)
         flash("Usuário deletado com sucesso.", "sucesso")
+        return redirect(url_for("buscar_usuarios"))
     except Exception as e:
-        flash(f"Erro ao deletar {e}", "erro")
+        flash(f"Erro ao deletar: {e}", "erro")
+        return redirect(url_for("buscar_usuarios"))
 
-    return redirect(url_for("buscar_usuarios"))
 
 if __name__ == "__main__":
     app.run(debug=True, port=8000)
