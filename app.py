@@ -58,7 +58,6 @@ def mostrar_cadastro():
 def login():
     cpf = request.form.get("cpf")
     senha = request.form.get("senha")
-    senha_hash = generate_password_hash(senha)
 
     usuarios = carregar_usuarios()
     usuario = next((u for u in usuarios if u.get("cpf") == cpf), None) # Busca o usuário com o CPF fornecido, ou None se não encontrado
