@@ -36,14 +36,14 @@ def salvar_usuario(usuario):
     except:
         return False  # Retorna False se ocorrer um erro ao salvar
 
-
+def contar_usuarios():
+    usuarios = carregar_usuarios()
+    return len(usuarios)  # Retorna o número de usuários na lista
 
 @app.route("/")
 def home():
     # Renderiza a página inicial com o formulário de cadastro
     return render_template("home.html")
-
-# ADICIONE estas rotas ANTES da rota /login POST existente:
 
 @app.route("/login", methods=["GET"])
 def mostrar_login():
@@ -100,6 +100,10 @@ def cadastrar_usuario():
         "senha": senha_hash,
     }
 
+        if not idade or int(idade) < 18:
+        flash("Idade mínima para cadastro é 18 anos.", "erro")
+        return render_template('cadastro-usuario.html', form_data=request.form)
+
     # tenta salvar usando a função auxiliar
     status = salvar_usuario(usuario)
 
@@ -143,4 +147,5 @@ def deletar_usuario(cpf):
 
 
 if __name__ == "__main__":
+
     app.run(debug=True, port=8000)
