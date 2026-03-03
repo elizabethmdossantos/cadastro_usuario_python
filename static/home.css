@@ -27,50 +27,23 @@ form h1 {
     text-align: center;
     margin-bottom: 25px;
     color: #111827;
-    font-size: 22px;
+    font-size: 24px;
 }
 
-label {
+a {
+    color: white;
+    text-decoration: none;
     display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    font-size: 14px;
-    color: #374151;
+    width: 100%;
+    text-align: center;
 }
 
-input {
-    width: 100%;
+p {
+    color: #1d4ed8;
     padding: 10px;
-    margin-bottom: 18px;
-    border: 1px solid #d1d5db;
     border-radius: 8px;
     font-size: 14px;
-    transition: 0.2s ease-in-out;
-}
-
-input:focus {
-    border-color: #2563eb;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-}
-
-/* wrapper para posicionar o ícone dentro do campo */
-.password-field {
-    position: relative;
-}
-
-.password-field .toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-.password-field .toggle-password svg {
-    display: block;
+    font-weight: bold;
 }
 
 button {
@@ -91,11 +64,8 @@ button:hover {
     transform: translateY(-2px);
 }
 
-a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    width: 100%;
+#btn1 {
+    background-color: #048830;
 }
 
 .flash {
