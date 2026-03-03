@@ -53,22 +53,21 @@ def mostrar_login():
 def mostrar_cadastro():
     return render_template("cadastro-usuario.html")
 
-
 @app.route("/login", methods=["POST"])
 def login():
     cpf = request.form.get("cpf")
     senha = request.form.get("senha")
-
+    
     usuarios = carregar_usuarios()
     usuario = next((u for u in usuarios if u.get("cpf") == cpf), None) # Busca o usuário com o CPF fornecido, ou None se não encontrado
 
     if usuario and check_password_hash(usuario.get("senha"), senha): # Verifica se o usuário existe e se a senha fornecida corresponde ao hash armazenado
-        flash("Login bem-sucedido!", "sucesso") 
+        flash("Login bem-sucedido!", "sucesso")
         return redirect(url_for('buscar_usuarios'))
+    
     else:
         flash("CPF ou senha incorretos.", "erro")
-        '''return redirect(url_for('login'))''' 
-        return render_template('login.html', form_data=request.form) # Mantém os dados do formulário para facilitar correção pelo usuário
+        return render_template('login.html', form_data=request.form)# Mantém os dados do formulário para facilitar correção pelo usuário
 
 @app.route("/cadastro-usuario", methods=["POST"])
 def cadastrar_usuario():

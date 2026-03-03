@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="/static/home.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <form action="">
         <h1>Bem-vindo</h1>
-        
-        
         <div class="button">
-            <p class="subtitle">Faça login para continuar: </p>
-            <button><a href="{{ url_for('mostrar_login') }}" class="login-button">Login</a></button><br><br>
-            <p class="subtitle">Cadastrar usuário: </p>
-            <button><a href="{{ url_for('mostrar_cadastro') }}" class="cadastrar-button">Cadastrar</a></button>
+            <p class="subtitle">Faça login para continuar ou crie uma conta: </p><br>
+            <button id="btn1"><a href="{{ url_for('mostrar_login') }}" class="login-button"><i class="fas fa-sign-in-alt"></i> Login</a></button><br><br>
+            <button id="btn2"><a href="{{ url_for('mostrar_cadastro') }}" class="cadastrar-button"><i class="fas fa-user-plus"></i> Cadastrar</a></button>
         </form>
         </div>
     </div>
 </body>
 </html>
+
