@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Usuários</title>
-    <link rel="stylesheet" href="/static/usuarios.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='usuarios.css') }}">
 </head>
 <body>
     <div class="container">
@@ -16,16 +16,23 @@
         {% endif %}
     {% endwith %}
         <h1>Usuários Cadastrados</h1>
-        <p>Total de usuários cadastrados: {{ usuarios|length }}</p><br>
+        <p>Total de usuários cadastrados: {{ usuarios|length }}</p>
+
+    <form method="POST" action="{{ url_for('login') }}">
+        <label for="buscar">Buscar usuário:</label>
+        <div class="buscar">
+        <input type="text" id="buscar" name="buscar" value="{{ form_data.cpf if form_data else '' }}">
+        </div><button type="submit">Buscar</button>
+    </form>
+    </div>
+
         <table>
             <thead>
                 <tr>
                     <th>Nome</th>
-                    <!-- CPF agora mostrado como identificador único -->
                     <th>CPF</th>
                     <th>E-mail</th>
                     <th>Idade</th>
-                    <!--<th>Senha</th>--> <!-- Senha não exibida por segurança -->
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -36,12 +43,21 @@
                     <td>{{ usuario.cpf }}</td>
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.idade }}</td>
-                    <!--<td>{{ usuario.senha }}</td>--> <!-- Senha não exibida por segurança -->
                     <td>
-                        <form action="{{ url_for('deletar_usuario', cpf=usuario.cpf) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');">
-                            <input type="hidden" name="cpf" value="{{ usuario.cpf }}">
-                            <button type="submit" class="delete-button">Deletar</button>
-                        </form>
+
+            <div class="acoes">
+
+                <a href="{{ url_for('editar_usuario', cpf=usuario.cpf) }}">
+                    <button type="button" class="btn-editar">Editar</button>
+                </a>
+            
+                <form action="{{ url_for('deletar_usuario', cpf=usuario.cpf) }}" 
+                    method="POST" 
+                    onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');">
+                    <input type="hidden" name="cpf" value="{{ usuario.cpf }}">
+                    <button type="submit" class="btn-deletar">Deletar</button>
+                </form>
+            </div>
                     </td>
                 </tr>
                 {% endfor %}

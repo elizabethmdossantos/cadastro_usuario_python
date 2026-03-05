@@ -4,8 +4,8 @@
         "nome": "elizabeth santos",
         "cpf": "12547896325",
         "email": "elizabeth.m.santos9@aluno.senai.br",
-        "idade": "18",
-        "senha": "scrypt:32768:8:1$5MTfXJTZ9sVdtLbL$5f4a1ebcb576a38bb1ab74da6b6afcb8cd4bdc496cae14f0ee4ced45131d5dcb4b14c6c34819054a7ca1c63e1140f7cf5cbecd9a6262bcc544fb27f6aa8f03e3"
+        "idade": 18,
+        "senha": "scrypt:32768:8:1$HrIKmJq0CweKDcNC$8e29cdcc34e9125e46a2109dfc01ac4f75788a4a3ec5053702aa70bf3c797783ffb0b5a6ba3b5ee4113a8d184c04a21284cc99c976bdc0c9425ea2644b17d78f"
     },
     {
         "id": "420978e1-ee7d-4f98-84c1-8ffa089dd911",
@@ -22,5 +22,13 @@
         "email": "jose@gmail.com",
         "idade": "36",
         "senha": "scrypt:32768:8:1$4qtWl4FyGtwoCLKM$1d124d67db7f2b740447099c06bf8c9756f92ca7aa7d7008c9bac20087eb4048b279bdcf076b085e501c758f5af2ed5c7f8074f0e6bac7f28a4413981e1ad953"
+    },
+    {
+        "id": "988c5379-040c-4ca3-bc27-b42ee88392b9",
+        "nome": "julia",
+        "cpf": "14785236950",
+        "email": "julia@gmail.com",
+        "idade": "25",
+        "senha": "scrypt:32768:8:1$MuIvUep17oj4jtfK$c4e23459ed781cae6885d8de51f621b94c314e1d66d25c4f66c6d4996e7414c7028c69114c8ded1d8ce70e2a8769150e5a5fee2cfa448af2048d3fdec1031d10"
     }
 ]
