@@ -18,13 +18,19 @@
         <h1>Usuários Cadastrados</h1>
         <p>Total de usuários cadastrados: {{ usuarios|length }}</p>
 
-    <form method="POST" action="{{ url_for('login') }}">
+    <form method="GET" action="{{ url_for('buscar_usuarios') }}">
         <label for="buscar">Buscar usuário:</label>
         <div class="buscar">
-        <input type="text" id="buscar" name="buscar" value="{{ form_data.cpf if form_data else '' }}">
-        </div><button type="submit">Buscar</button>
+        <input type="text" id="buscar" name="busca" value="{{ request.args.get('busca', '') }}">
+        <button type="submit">Buscar</button>
+        <a href="{{ url_for('buscar_usuarios') }}">Limpar</a>
+        </div>
     </form>
+
+    <div class="acoes">
+        <button><a href="{{ url_for('logout') }}">logout</a></button>
     </div>
+
 
         <table>
             <thead>
@@ -65,5 +71,6 @@
         </table>
         <a href="{{ url_for('home') }}">Voltar a página home</a>
     </div>
+        </div>
 </body>
 </html>

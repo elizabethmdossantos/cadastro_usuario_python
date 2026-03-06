@@ -3,6 +3,7 @@ import json
 import os
 import uuid  # usado para gerar IDs únicos (uuid4)
 from werkzeug.security import generate_password_hash, check_password_hash
+import re
 
 app = Flask(__name__)
 # chave necessária para utilizar `flash` e sessões
@@ -36,7 +37,7 @@ def salvar_usuario(usuario):
     except:
         return False  # Retorna False se ocorrer um erro ao salvar
 
-def buscar_usuario_por_email(cpf):
+def buscar_usuario_por_cpf(cpf):
     usuarios = carregar_usuarios()
     for usuario in usuarios:
         if usuario.get("cpf") == cpf:
@@ -50,6 +51,28 @@ def salvar_todos_usuarios(usuarios):
         return True
     except:
         return False
+
+def validar_cpf(cpf_enviado):
+    # Validar o formato: 000.000.000-00
+    padrao = r"^\d{3}\.\d{3}\.\d{3}-\d{2}$"
+    if not re.match(padrao, cpf_enviado):
+        return None
+
+    # Remover tudo que não for número para validar apenas os dígitos
+    cpf_limpo = re.sub(r'[^0-9]', '', cpf_enviado)
+
+    # Impedir CPFs com todos os números iguais (ex: 11111111111)
+    if cpf_limpo == cpf_limpo[0] * 11:
+        return None
+
+    # Cálculo dos dígitos, impede cpfs falsos
+    for i in range(9, 11):
+        soma = sum(int(cpf_limpo[num]) * ((i + 1) - num) for num in range(i))
+        digito = (soma * 10 % 11) % 10
+        if digito != int(cpf_limpo[i]):
+            return None
+        
+    return cpf_limpo
 
 
 # ROTAS
@@ -79,7 +102,7 @@ def login():
     usuarios = carregar_usuarios()
     usuario = next((u for u in usuarios if u.get("cpf") == cpf), None) # Busca o usuário com o CPF fornecido, ou None se não encontrado
 
-    if usuario ["cpf"] == cpf and check_password_hash(usuario["senha"], senha): # Verifica se o usuário existe e se a senha fornecida corresponde ao hash armazenado
+    if usuario and usuario ["cpf"] == cpf and check_password_hash(usuario["senha"], senha): # Verifica se o usuário existe e se a senha fornecida corresponde ao hash armazenado
         session ["usuario_id"] = usuario["id"]
         session ["usuario_nome"] = usuario["nome"]
 
@@ -89,6 +112,8 @@ def login():
     else:
         flash("CPF ou senha incorretos.", "erro")
         return render_template('login.html', form_data=request.form)# Mantém os dados do formulário para facilitar correção pelo usuário
+    
+    return render_template('login.html')  # Para GET, mostra o form limpo
 
 
 # CADASTRO DE USUÁRIO
@@ -98,18 +123,26 @@ def cadastrar_usuario():
     # Recupera os dados enviados pelo formulário HTML
     if request.method == "GET":
         return render_template("cadastro-usuario.html")
+    
     nome = request.form.get("nome")
-    cpf = request.form.get("cpf")            # CPF do usuário (identificador único)
+    cpf_digitado = request.form.get("cpf")            # CPF do usuário (identificador único)
     email = request.form.get("email")
     idade = request.form.get("idade")
     senha = request.form.get("senha")
     senha_hash = generate_password_hash(senha) # Armazena a senha de forma segura usando hash
-
+   
+    cpf_validado = validar_cpf(cpf_digitado)
+    # validação do CPF, impede cadastro de CPFs com formato errado ou falsos
+    if not cpf_validado:
+        flash("CPF inválido! Use o formato 000.000.000-00", "erro")
+        return render_template('cadastro-usuario.html', form_data=request.form)
+    
+    
     # carrega usuários atuais para checar duplicatas
     usuarios = carregar_usuarios()
 
     # evita inserir CPF repetido
-    if any(u.get("cpf") == cpf for u in usuarios):
+    if any(u.get("cpf") == cpf_validado for u in usuarios):
         flash("CPF já cadastrado no sistema.", "erro")
         '''return redirect(url_for("home")) #antes'''
         return render_template('cadastro-usuario.html', form_data=request.form) # Mantém os dados do formulário para facilitar correção pelo usuário
@@ -122,7 +155,7 @@ def cadastrar_usuario():
     usuario = {
         "id": str(uuid.uuid4()),  # identificador global para uso interno
         "nome": nome,
-        "cpf": cpf,
+        "cpf": cpf_validado,
         "email": email,
         "idade": idade,
         "senha": senha_hash,
@@ -152,7 +185,7 @@ def logout():
 
 # USUÁRIOS
 
-@app.route("/usuarios", methods=["GET"])
+'''@app.route("/usuarios", methods=["GET"])
 def buscar_usuarios():
     usuarios = carregar_usuarios()
     if "usuario_id" not in session:
@@ -161,7 +194,7 @@ def buscar_usuarios():
     
     usuarios = carregar_usuarios()
     total = len(usuarios)
-    return render_template("usuarios.html", usuarios=usuarios, total=total)
+    return render_template("usuarios.html", usuarios=usuarios, total=total)'''
 
 @app.route("/usuarios/json", methods=["GET"])
 def buscar_usuarios_json():
@@ -169,6 +202,22 @@ def buscar_usuarios_json():
         return jsonify({"erro": "Não autorizado"}, 401)
     usuarios = carregar_usuarios()
     return jsonify(usuarios)
+
+@app.route("/usuarios", methods=["GET"])
+def buscar_usuarios():
+    if "usuario_id" not in session:
+        flash("Você precisa estar logado.", "erro")
+        return redirect(url_for("login"))
+    
+    usuarios = carregar_usuarios()
+    termo_busca = request.args.get("busca") # Pega o valor do input 'name="busca"'
+
+    # Se o usuário digitou algo, filtramos a lista
+    if termo_busca:
+        usuarios = [u for u in usuarios if termo_busca in u.get("cpf", "")]
+
+    total = len(usuarios)
+    return render_template("usuarios.html", usuarios=usuarios, total=total)
 
 
 # EDITAR
