@@ -63,6 +63,14 @@ input:focus {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
+input:invalid {
+    border-color: #ef4444 !important;
+}
+
+input:valid {
+    border-color: #10b981;
+}
+
 /* wrapper para posicionar o ícone dentro do campo */
 .password-field {
     position: relative;

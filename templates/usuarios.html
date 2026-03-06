@@ -21,16 +21,22 @@
     <form method="GET" action="{{ url_for('buscar_usuarios') }}">
         <label for="buscar">Buscar usuário:</label>
         <div class="buscar">
-        <input type="text" id="buscar" name="busca" value="{{ request.args.get('busca', '') }}">
-        <button type="submit">Buscar</button>
-        <a href="{{ url_for('buscar_usuarios') }}">Limpar</a>
+        <input type="text" id="buscar" name="busca" value="{{ request.args.get('busca', '') }}" placeholder="Digite nome ou CPF">
+        <button type="submit" class="button" id="btn-buscar">Buscar</button>
+        <a href="{{ url_for('buscar_usuarios') }}" style="margin-left: 10px; color: #fc275c;">Limpar</a>
         </div>
-    </form>
+    </form><br>
 
-    <div class="acoes">
-        <button><a href="{{ url_for('logout') }}">logout</a></button>
+    <div>
+        <label for="ordenar">Ordenar por idade:</label>
+        <div class="ordenar">
+        <a href="{{ url_for('buscar_usuarios', busca=request.args.get('busca', ''), ordem='asc') }}">
+            <button type="button" class="button" id="btn-ordenar-asc">Crescente</button>
+        </a>
+        <a href="{{ url_for('buscar_usuarios', busca=request.args.get('busca', ''), ordem='desc') }}" style="margin-left: 10px;">
+            <button type="button" class="button" id="btn-ordenar-desc">Decrescente</button>
+        </a>
     </div>
-
 
         <table>
             <thead>
@@ -54,14 +60,15 @@
             <div class="acoes">
 
                 <a href="{{ url_for('editar_usuario', cpf=usuario.cpf) }}">
-                    <button type="button" class="btn-editar">Editar</button>
+                    <button type="button" class="button" id="btn-editar">Editar</button>
                 </a>
             
                 <form action="{{ url_for('deletar_usuario', cpf=usuario.cpf) }}" 
                     method="POST" 
                     onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');">
+
                     <input type="hidden" name="cpf" value="{{ usuario.cpf }}">
-                    <button type="submit" class="btn-deletar">Deletar</button>
+                    <button type="submit" class="button" id="btn-deletar">Deletar</button>
                 </form>
             </div>
                     </td>
@@ -69,8 +76,10 @@
                 {% endfor %}
             </tbody>
         </table>
-        <a href="{{ url_for('home') }}">Voltar a página home</a>
-    </div>
+
+        <div class="logout">
+        <button type="button" class="button" id="btn-logout" ><a href="{{ url_for('logout') }}">Logout</a></button>
         </div>
+    </div>
 </body>
 </html>

@@ -37,10 +37,17 @@ def salvar_usuario(usuario):
     except:
         return False  # Retorna False se ocorrer um erro ao salvar
 
-def buscar_usuario_por_cpf(cpf):
+def buscar_usuario_por_cpf(cpf ):
     usuarios = carregar_usuarios()
     for usuario in usuarios:
         if usuario.get("cpf") == cpf:
+            return usuario
+    return None
+
+def buscar_usuario_por_nome(nome):
+    usuarios = carregar_usuarios()
+    for usuario in usuarios:
+        if usuario.get("nome") == nome:
             return usuario
     return None
 
@@ -58,10 +65,10 @@ def validar_cpf(cpf_enviado):
     if not re.match(padrao, cpf_enviado):
         return None
 
-    # Remover tudo que não for número para validar apenas os dígitos
+    # Remover pontuação apenas para o calculo matemático
     cpf_limpo = re.sub(r'[^0-9]', '', cpf_enviado)
 
-    # Impedir CPFs com todos os números iguais (ex: 11111111111)
+    # Impedir CPFs com todos os números iguais
     if cpf_limpo == cpf_limpo[0] * 11:
         return None
 
@@ -72,7 +79,7 @@ def validar_cpf(cpf_enviado):
         if digito != int(cpf_limpo[i]):
             return None
         
-    return cpf_limpo
+    return cpf_enviado  # Retorna o CPF formatado se for válido
 
 
 # ROTAS
@@ -95,14 +102,21 @@ def mostrar_cadastro():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
-        cpf = request.form.get("cpf")
+        cpf_digitado = request.form.get("cpf")
         senha = request.form.get("senha")
     
+    cpf_validado = validar_cpf(cpf_digitado)
+    
+    if not cpf_validado:
+        flash("CPF inválido! Use o formato 000.000.000-00", "erro")
+        return render_template('login.html', form_data=request.form)
+    
     usuarios = carregar_usuarios()
-    usuario = next((u for u in usuarios if u.get("cpf") == cpf), None) # Busca o usuário com o CPF fornecido, ou None se não encontrado
+    usuario = next((u for u in usuarios if u.get("cpf") == cpf_validado), None) # Busca o usuário com o CPF fornecido, ou None se não encontrado
 
-    if usuario and usuario ["cpf"] == cpf and check_password_hash(usuario["senha"], senha): # Verifica se o usuário existe e se a senha fornecida corresponde ao hash armazenado
+    if usuario and check_password_hash(usuario["senha"], senha): # Verifica se o usuário existe e se a senha fornecida corresponde ao hash armazenado
         session ["usuario_id"] = usuario["id"]
         session ["usuario_nome"] = usuario["nome"]
 
@@ -113,7 +127,7 @@ def login():
         flash("CPF ou senha incorretos.", "erro")
         return render_template('login.html', form_data=request.form)# Mantém os dados do formulário para facilitar correção pelo usuário
     
-    return render_template('login.html')  # Para GET, mostra o form limpo
+    return render_template('login.html')
 
 
 # CADASTRO DE USUÁRIO
@@ -125,7 +139,7 @@ def cadastrar_usuario():
         return render_template("cadastro-usuario.html")
     
     nome = request.form.get("nome")
-    cpf_digitado = request.form.get("cpf")            # CPF do usuário (identificador único)
+    cpf_digitado = request.form.get("cpf")  # CPF do usuário (identificador único)
     email = request.form.get("email")
     idade = request.form.get("idade")
     senha = request.form.get("senha")
@@ -185,17 +199,7 @@ def logout():
 
 # USUÁRIOS
 
-'''@app.route("/usuarios", methods=["GET"])
-def buscar_usuarios():
-    usuarios = carregar_usuarios()
-    if "usuario_id" not in session:
-        flash("Você precisa estar logado.", "erro")
-        return redirect(url_for("login"))
-    
-    usuarios = carregar_usuarios()
-    total = len(usuarios)
-    return render_template("usuarios.html", usuarios=usuarios, total=total)'''
-
+# Rota para retornar a lista de usuários em formato JSON, protegida por autenticação
 @app.route("/usuarios/json", methods=["GET"])
 def buscar_usuarios_json():
     if "usuario_id" not in session:
@@ -203,6 +207,7 @@ def buscar_usuarios_json():
     usuarios = carregar_usuarios()
     return jsonify(usuarios)
 
+# Rota para exibir a lista de usuários em uma página HTML, protegida por autenticação
 @app.route("/usuarios", methods=["GET"])
 def buscar_usuarios():
     if "usuario_id" not in session:
@@ -210,14 +215,21 @@ def buscar_usuarios():
         return redirect(url_for("login"))
     
     usuarios = carregar_usuarios()
+ 
     termo_busca = request.args.get("busca") # Pega o valor do input 'name="busca"'
-
-    # Se o usuário digitou algo, filtramos a lista
     if termo_busca:
-        usuarios = [u for u in usuarios if termo_busca in u.get("cpf", "")]
+        usuarios = [u for u in usuarios if termo_busca in u.get("cpf", "") or termo_busca in u.get("nome", "")]
+
+ # NOVA PARTE: Ordenação por idade
+    ordem = request.args.get("ordem", "asc")
+    usuarios = sorted(
+        usuarios,
+        key=lambda u: int(u.get("idade", 0)),
+        reverse=(ordem == "desc"))
 
     total = len(usuarios)
     return render_template("usuarios.html", usuarios=usuarios, total=total)
+
 
 
 # EDITAR
@@ -231,24 +243,20 @@ def editar_usuario(cpf):
     
     usuarios = carregar_usuarios()
 
-    # aqui vai buscar o usuário pelo cpf
     usuario = next((u for u in usuarios if u["cpf"] == cpf), None)
 
     if not usuario:
         flash("Usuário não encontrado.", "erro")
         return redirect(url_for("buscar_usuarios"))
     
-    # GET - carrega o formulário
     if request.method == "GET":
         return render_template("editar_usuario.html", usuario=usuario)
-    
-    # POST - atualiza os dados
+
     nome = request.form.get("nome")
     email = request.form.get("email")
     idade = int(request.form.get("idade"))
     senha = request.form.get("senha")
     
-    # validação de idade também no update
     if not idade or int(idade) < 18:
         flash("Idade mínima para cadastro é 18 anos.", "erro")
         return render_template('cadastro-usuario.html', form_data=request.form)
@@ -265,6 +273,7 @@ def editar_usuario(cpf):
 
     if status:
         flash("Usuário atualizado com sucesso!", "sucesso")
+        return redirect(url_for("buscar_usuarios"))
     else:
         flash("Erro ao atualizar usuário.", "erro")
         return redirect(url_for("buscar_usuários"))

@@ -51,16 +51,45 @@
         <button type="submit">Cadastrar</button>
         <a href="{{ url_for('home') }}">Voltar a página home</a>
     </form>
-    <script>
-        const senhaInput = document.getElementById('senha');
-        const toggle = document.getElementById('toggleSenha');
-        const eyeIcon = document.createElement('svg');
-        toggle.addEventListener('click', function(){
-            const visivel = senhaInput.getAttribute('type') === 'text';
-            senhaInput.type = visivel ? 'password' : 'text';
-            eyeIcon.setAttribute('stroke', visivel ? '#374151' : '#2563eb');
-        });
-    </script>
+<script>
+    const cpfInput = document.getElementById('cpf');
+    const senhaInput = document.getElementById('senha');
+    const toggle = document.getElementById('toggleSenha');
+
+    // Função para validar formato CPF
+    function validarFormatoCPF(cpf) {
+        const padrao = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+        return padrao.test(cpf);
+    }
+
+    // Máscara para CPF
+    cpfInput.addEventListener('input', function(e) {
+        let valor = e.target.value.replace(/\D/g, '');
+        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+        valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        e.target.value = valor.substring(0, 14);
+    });
+
+    // Validação em tempo real
+    cpfInput.addEventListener('blur', function() {
+        if (this.value && !validarFormatoCPF(this.value)) {
+            this.setCustomValidity('CPF deve estar no formato 000.000.000-00');
+            this.style.borderColor = '#ef4444';
+        } else {
+            this.setCustomValidity('');
+            this.style.borderColor = '';
+        }
+    });
+
+    // Corrigir toggle senha
+    const eyeIcon = toggle.querySelector('svg');
+    toggle.addEventListener('click', function(){
+        const visivel = senhaInput.getAttribute('type') === 'text';
+        senhaInput.type = visivel ? 'password' : 'text';
+        eyeIcon.setAttribute('stroke', visivel ? '#374151' : '#2563eb');
+    });
+</script>
 
 </body>
 </html>

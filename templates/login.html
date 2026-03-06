@@ -20,7 +20,7 @@
     <form method="POST" action="{{ url_for('login') }}">
         <h1>Login</h1>
         <label for="cpf">CPF:</label>
-        <input type="text" name="cpf" value="{{ form_data.cpf if form_data else '' }}" placeholder="Digite seu CPF">
+        <input type="text" name="cpf" value="{{ form_data.cpf if form_data else '' }}" placeholder="000.000.000-00">
         
         <label for="senha">Senha:</label>
         <div class="password-field">
@@ -39,15 +39,45 @@
         <a href="{{ url_for('home') }}">Voltar a página home</a>
     </form>
     </div>
-    <script>
-        const senhaInput = document.getElementById('senha');
-        const toggle = document.getElementById('toggleSenha');
-        const eyeIcon = document.createElement('svg');
-        toggle.addEventListener('click', function(){
-            const visivel = senhaInput.getAttribute('type') === 'text';
-            senhaInput.type = visivel ? 'password' : 'text';
-            eyeIcon.setAttribute('stroke', visivel ? '#374151' : '#2563eb');
-        });
-    </script>
+<script>
+    const cpfInput = document.querySelector('input[name="cpf"]');
+    const senhaInput = document.getElementById('senha');
+    const toggle = document.getElementById('toggleSenha');
+    const eyeIcon = toggle.querySelector('svg');
+
+    // Função para validar formato CPF
+    function validarFormatoCPF(cpf) {
+        const padrao = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+        return padrao.test(cpf);
+    }
+
+    // Máscara para CPF
+    cpfInput.addEventListener('input', function(e) {
+        let valor = e.target.value.replace(/\D/g, '');
+        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+        valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        e.target.value = valor.substring(0, 14);
+    });
+
+    // Validação em tempo real
+    cpfInput.addEventListener('blur', function() {
+        if (this.value && !validarFormatoCPF(this.value)) {
+            this.setCustomValidity('CPF deve estar no formato 000.000.000-00');
+            this.style.borderColor = '#ef4444';
+        } else {
+            this.setCustomValidity('');
+            this.style.borderColor = '';
+        }
+    });
+
+    // Toggle senha
+    toggle.addEventListener('click', function(){
+        const visivel = senhaInput.getAttribute('type') === 'text';
+        senhaInput.type = visivel ? 'password' : 'text';
+        eyeIcon.setAttribute('stroke', visivel ? '#374151' : '#2563eb');
+    });
+</script>
+
 </body>
 </html>
