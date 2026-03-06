@@ -14,5 +14,13 @@
         "email": "monica@email.com",
         "idade": "35",
         "senha": "scrypt:32768:8:1$geKUzYe9brGFKDpJ$757d675be779a83114c19ee3c059c5057e2b60e2e6ffb85b136da833bdb6504ba391469d3e01c03b92dccd8ca86e29489356a5618727b5ea4d0942b4305fd3dd"
+    },
+    {
+        "id": "4eb634e2-46fc-4082-b128-441c23d9c549",
+        "nome": "elielton",
+        "cpf": "125.900.244-60",
+        "email": "elielton@email.com",
+        "idade": "27",
+        "senha": "scrypt:32768:8:1$ayN2x45WI6To51fq$fe7776f01645b08b14141c8f8ba658b6ccfa3efda95f80168e2d5e5e9a5c6a711f3badf1326128be733263e59eded47ba48daa9ad47b9458fd8b2b35fc624f77"
     }
 ]

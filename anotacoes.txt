@@ -1,0 +1,18 @@
+NÍVEL 2 — Evolução Estrutural
+
+Aqui o vocês já precisam pensar em arquitetura.
+
+4️⃣ Criar nível de usuário (Admin / Comum)
+
+Regras:
+Apenas Admin pode excluir
+
+Usuário comum apenas edita o próprio perfil
+
+
+Conceitos:
+Controle de permissão
+
+Condicional no template
+
+Sessão mais estruturada

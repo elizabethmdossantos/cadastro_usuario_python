@@ -35,6 +35,8 @@
                     </svg>
             </span>
         </div>
+        <label for="admin">Administrador:</label>
+        <input type="text" name="codigo_admin" value="{{ form_data.codigo_admin if form_data else '' }}" placeholder="Código de administrador" >
         <button type="submit">Entrar</button>
         <a href="{{ url_for('home') }}">Voltar a página home</a>
     </form>

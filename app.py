@@ -37,7 +37,11 @@ def salvar_usuario(usuario):
     except:
         return False  # Retorna False se ocorrer um erro ao salvar
 
-def buscar_usuario_por_cpf(cpf ):
+def buscar_usuario():
+    usuarios = carregar_usuarios()
+    return usuarios
+
+def buscar_usuario_por_cpf(cpf):
     usuarios = carregar_usuarios()
     for usuario in usuarios:
         if usuario.get("cpf") == cpf:
@@ -89,46 +93,41 @@ def home():
     # Renderiza a página inicial com o formulário de cadastro
     return render_template("home.html")
 
-@app.route("/login", methods=["GET"])
-def mostrar_login():
-    return render_template("login.html")
-
-@app.route("/cadastro-usuario", methods=["GET"])
-def mostrar_cadastro():
-    return render_template("cadastro-usuario.html")
-
-
 # LOGIN
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
         cpf_digitado = request.form.get("cpf")
         senha = request.form.get("senha")
+        codigo_enviado = request.form.get("codigo_admin")
     
-    cpf_validado = validar_cpf(cpf_digitado)
-    
-    if not cpf_validado:
-        flash("CPF inválido! Use o formato 000.000.000-00", "erro")
-        return render_template('login.html', form_data=request.form)
-    
-    usuarios = carregar_usuarios()
-    usuario = next((u for u in usuarios if u.get("cpf") == cpf_validado), None) # Busca o usuário com o CPF fornecido, ou None se não encontrado
+        cpf_validado = validar_cpf(cpf_digitado)
+        
+        if not cpf_validado:
+            flash("CPF inválido! Use o formato 000.000.000-00", "erro")
+            return render_template('login.html', form_data=request.form)
+        
+        usuarios = carregar_usuarios()
+        usuario = next((u for u in usuarios if u.get("cpf") == cpf_validado), None)
 
-    if usuario and check_password_hash(usuario["senha"], senha): # Verifica se o usuário existe e se a senha fornecida corresponde ao hash armazenado
-        session ["usuario_id"] = usuario["id"]
-        session ["usuario_nome"] = usuario["nome"]
+        if usuario and check_password_hash(usuario["senha"], senha):
+            session["usuario_id"] = usuario["id"]
+            session["usuario_nome"] = usuario["nome"]
+            session["usuario_cpf"] = usuario["cpf"]
 
-        flash("Login bem-sucedido!",  "sucesso")
-        return redirect(url_for('buscar_usuarios'))
-    
-    else:
-        flash("CPF ou senha incorretos.", "erro")
-        return render_template('login.html', form_data=request.form)# Mantém os dados do formulário para facilitar correção pelo usuário
-    
-    return render_template('login.html')
+            if codigo_enviado == "admin123":
+                session["nivel"] = "admin"
+            else:
+                session["nivel"] = "comum"
 
+            flash(f"Bem-vindo, {usuario['nome']}!", "sucesso")
+            return redirect(url_for('buscar_usuarios'))
+        else:
+            flash("CPF ou senha incorretos.", "erro")
+            return render_template('login.html', form_data=request.form)
+
+    return render_template("login.html")
 
 # CADASTRO DE USUÁRIO
 
@@ -179,6 +178,10 @@ def cadastrar_usuario():
     status = salvar_usuario(usuario)
 
     if status:
+        session["usuario_id"] = usuario["id"]
+        session["usuario_nome"] = usuario["nome"]
+        session["usuario_cpf"] = usuario["cpf"]
+        session["nivel"] = "comum"
         # após cadastro redireciona para a lista de usuários
         flash("Usuário cadastrado com sucesso.", "sucesso")
         return redirect(url_for('buscar_usuarios'))
@@ -241,6 +244,13 @@ def editar_usuario(cpf):
         flash("Não autorizado.", "erro")
         return redirect(url_for("login"))
     
+    e_dono_do_perfil = session.get("usuario_cpf") == cpf
+    e_admin = session.get("nivel") == "admin"
+
+    if not e_dono_do_perfil and not e_admin:
+        flash("Apenas administradores ou o próprio usuário podem editar este perfil.", "erro")
+        return redirect(url_for("buscar_usuarios"))
+    
     usuarios = carregar_usuarios()
 
     usuario = next((u for u in usuarios if u["cpf"] == cpf), None)
@@ -276,33 +286,38 @@ def editar_usuario(cpf):
         return redirect(url_for("buscar_usuarios"))
     else:
         flash("Erro ao atualizar usuário.", "erro")
-        return redirect(url_for("buscar_usuários"))
+        return redirect(url_for("buscar_usuarios"))
 
 
 # DELETAR
 
 @app.route("/usuarios/deletar", methods=["POST"])
-def deletar_usuario(cpf):
+def deletar_usuario():
+    # Verifica se está logado
     if "usuario_id" not in session:
-        flash("Não autorizado.", "erro")
+        flash("Você precisa estar logado.", "erro")
         return redirect(url_for("login"))
+
+    # Apenas Admin deleta
+    if session.get("nivel") != "admin":
+        flash("Acesso negado! Apenas administradores podem deletar usuários.", "erro")
+        return redirect(url_for("buscar_usuarios"))
     
-    cpf = request.form.get("cpf")
-    if not cpf:
-        flash("CPF necessário para deletar usuário.", "erro")
+    cpf_para_deletar = request.form.get("cpf")
+    if not cpf_para_deletar:
+        flash("CPF não fornecido.", "erro")
         return redirect(url_for("buscar_usuarios"))
     
     usuarios = carregar_usuarios()
-    novos_usuarios = [u for u in usuarios if u.get("cpf") != cpf]
+    # Cria a nova lista sem o usuário deletado
+    novos_usuarios = [u for u in usuarios if u.get("cpf") != cpf_para_deletar]
     
-    try:
-        with open("usuarios.json", "w", encoding="utf-8") as arquivo:
-            json.dump(novos_usuarios, arquivo, indent=4)
+    if salvar_todos_usuarios(novos_usuarios):
         flash("Usuário deletado com sucesso.", "sucesso")
-        return redirect(url_for("buscar_usuarios"))
-    except Exception as e:
-        flash(f"Erro ao deletar: {e}", "erro")
-        return redirect(url_for("buscar_usuarios"))
+    else:
+        flash("Erro ao salvar alterações no banco de dados.", "erro")
+        
+    return redirect(url_for("buscar_usuarios"))
 
 
 if __name__ == "__main__":

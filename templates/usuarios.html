@@ -16,9 +16,11 @@
         {% endif %}
     {% endwith %}
         <h1>Usuários Cadastrados</h1>
+        <p>Logado como: <strong>{{ session['usuario_nome'] }}</strong> ({{ session['nivel']|upper }})</p>
         <p>Total de usuários cadastrados: {{ usuarios|length }}</p>
-
-    <form method="GET" action="{{ url_for('buscar_usuarios') }}">
+        
+    
+        <form method="GET" action="{{ url_for('buscar_usuarios') }}">
         <label for="buscar">Buscar usuário:</label>
         <div class="buscar">
         <input type="text" id="buscar" name="busca" value="{{ request.args.get('busca', '') }}" placeholder="Digite nome ou CPF">
@@ -59,17 +61,21 @@
 
             <div class="acoes">
 
-                <a href="{{ url_for('editar_usuario', cpf=usuario.cpf) }}">
-                    <button type="button" class="button" id="btn-editar">Editar</button>
-                </a>
-            
-                <form action="{{ url_for('deletar_usuario', cpf=usuario.cpf) }}" 
-                    method="POST" 
-                    onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');">
+            {% if session['nivel'] == 'admin' or session['usuario_cpf'] == usuario.cpf %}
+            <a href="{{ url_for('editar_usuario', cpf=usuario.cpf) }}">
+            <button type="button" class="button" id="btn-editar">Editar</button>
+            </a>
+            {% endif %} {% if session['nivel'] == 'admin' %}
+            <form action="{{ url_for('deletar_usuario') }}" 
+             method="POST" 
+             onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');">
 
-                    <input type="hidden" name="cpf" value="{{ usuario.cpf }}">
-                    <button type="submit" class="button" id="btn-deletar">Deletar</button>
-                </form>
+            <input type="hidden" name="cpf" value="{{ usuario.cpf }}">
+            <button type="submit" class="button" id="btn-deletar">Deletar</button>
+            </form>
+            {% endif %} {% if session['nivel'] != 'admin' and session['usuario_cpf'] != usuario.cpf %}
+            <span style="font-size: 0.8em; color: gray;">Sem permissão</span>
+            {% endif %}
             </div>
                     </td>
                 </tr>
