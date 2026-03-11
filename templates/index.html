@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+
+        <h1>Bem-vindo</h1>
+
+        <div class="button">
+            <p class="subtitle">Faça login para continuar ou crie uma conta: </p><br><br>
+
+            <a href="{{ url_for('login') }}" class="btn primary">
+                Acessar Login
+            </a> <br><br>
+
+            <a href="{{ url_for('cadastrar_usuario') }}" class="btn success">
+                Realizar Cadastro
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+

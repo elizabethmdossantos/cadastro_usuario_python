@@ -16,29 +16,38 @@
         {% endif %}
     {% endwith %}
         <h1>Usuários Cadastrados</h1>
-        <p>Logado como: <strong>{{ session['usuario_nome'] }}</strong> ({{ session['nivel']|upper }})</p>
-        <p>Total de usuários cadastrados: {{ usuarios|length }}</p>
-        
+        <p class="contador">
+            Total de usuários cadastrados: <strong>{{ total }}</strong>
+        </p>
     
-        <form method="GET" action="{{ url_for('buscar_usuarios') }}">
-        <label for="buscar">Buscar usuário:</label>
-        <div class="buscar">
-        <input type="text" id="buscar" name="busca" value="{{ request.args.get('busca', '') }}" placeholder="Digite nome ou CPF">
-        <button type="submit" class="button" id="btn-buscar">Buscar</button>
-        <a href="{{ url_for('buscar_usuarios') }}" style="margin-left: 10px; color: #fc275c;">Limpar</a>
-        </div>
-    </form><br>
+        <form method="GET" action="{{ url_for('buscar_usuarios') }}" class="form-busca">
+            <input
+                type="text"
+                name="q"
+                placeholder="Buscar por nome ou CPF..."
+                value="{{ busca }}"
+            />
+            <input type="hidden" name="ordem" value="{{ ordem }}" />
+            <button type="submit">Buscar</button>
+            {% if busca %}
+                <a href="{{ url_for('buscar_usuarios', ordem=ordem) }}" class="btn-limpar">Limpar</a>
+            {% endif %}
+        </form>
 
-    <div>
-        <label for="ordenar">Ordenar por idade:</label>
-        <div class="ordenar">
-        <a href="{{ url_for('buscar_usuarios', busca=request.args.get('busca', ''), ordem='asc') }}">
-            <button type="button" class="button" id="btn-ordenar-asc">Crescente</button>
-        </a>
-        <a href="{{ url_for('buscar_usuarios', busca=request.args.get('busca', ''), ordem='desc') }}" style="margin-left: 10px;">
-            <button type="button" class="button" id="btn-ordenar-desc">Decrescente</button>
-        </a>
-    </div>
+    <div class="ordenacao">
+            Ordenar por idade:
+            <a href="{{ url_for('buscar_usuarios', q=busca, ordem='asc') }}"
+               class="btn-ordem {{ 'ativo' if ordem == 'asc' else '' }}">
+                ↑ Crescente
+            </a>
+            <a href="{{ url_for('buscar_usuarios', q=busca, ordem='desc') }}"
+               class="btn-ordem {{ 'ativo' if ordem == 'desc' else '' }}">
+                ↓ Decrescente
+            </a>
+            {% if ordem %}
+                <a href="{{ url_for('buscar_usuarios', q=busca) }}" class="btn-limpar">Sem ordenação</a>
+            {% endif %}
+        </div>
 
         <table>
             <thead>
@@ -58,28 +67,40 @@
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.idade }}</td>
                     <td>
+                        <span class="badge {{ 'badge-admin' if usuario.get('perfil') == 'admin' else 'badge-comum' }}">
+                            {{ usuario.get('perfil', 'comum') }}
+                        </span>
+                    </td>
 
-            <div class="acoes">
+                    <td>
+                        <div class="acoes">
 
-            {% if session['nivel'] == 'admin' or session['usuario_cpf'] == usuario.cpf %}
-            <a href="{{ url_for('editar_usuario', cpf=usuario.cpf) }}">
-            <button type="button" class="button" id="btn-editar">Editar</button>
-            </a>
-            {% endif %} {% if session['nivel'] == 'admin' %}
-            <form action="{{ url_for('deletar_usuario') }}" 
-             method="POST" 
-             onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');">
+                            {% if session.usuario_perfil == 'admin' or session.usuario_id == usuario.id %}
+                                <a href="{{ url_for('editar_usuario', cpf=usuario.cpf) }}">
+                                    <button type="button" class="btn-editar">Editar</button>
+                                </a>
+                            {% endif %}
 
-            <input type="hidden" name="cpf" value="{{ usuario.cpf }}">
-            <button type="submit" class="button" id="btn-deletar">Deletar</button>
-            </form>
-            {% endif %} {% if session['nivel'] != 'admin' and session['usuario_cpf'] != usuario.cpf %}
-            <span style="font-size: 0.8em; color: gray;">Sem permissão</span>
-            {% endif %}
-            </div>
+                            {% if session.usuario_perfil == 'admin' %}
+                                <form action="{{ url_for('deletar_usuario') }}"
+                                      method="post"
+                                      onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');">
+                                    <input type="hidden" name="cpf" value="{{ usuario.cpf }}" />
+                                    <button type="submit" class="btn-excluir">Excluir</button>
+                                </form>
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
+                
+                {% if not usuarios %}
+                <tr>
+                    <td colspan="6" style="text-align:center; color:#888;">
+                        Nenhum usuário encontrado.
+                    </td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
 

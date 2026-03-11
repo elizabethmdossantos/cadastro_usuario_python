@@ -30,70 +30,6 @@ h1 {
     font-size: 24px;
 }
 
-a{
-    display: block;
-    text-align: center;
-    color: #000;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-p{
-    display: inline-block;
-    color: #e5e7eb;
-    background-color: #2563eb;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 20px;
-}
-
-form[action*="buscar"] {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 25px;
-    padding: 15px;
-    background: #f9fafb;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-.buscar {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.buscar input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.buscar input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    color: #111827;
-    font-size: 14px;
-}
-
-.ordenar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
@@ -132,15 +68,14 @@ tbody tr:last-child td {
     border-bottom: none;
 }
 
-.acoes {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-start;
+/* botão de exclusão dentro da célula */
+.container form {
+    display: inline;
 }
 
-.button {
-    padding: 8px 14px;
-    background-color: #2563eb;
+.container form button {
+    padding: 6px 12px;
+    background-color: #dc2626;
     border: none;
     border-radius: 4px;
     color: white;
@@ -149,56 +84,200 @@ tbody tr:last-child td {
     transition: 0.2s ease-in-out;
 }
 
-.button:hover {
-    opacity: 0.9;
+.container form button:hover {
+    background-color: #b91c1c;
     transform: translateY(-1px);
 }
 
-#btn-logout {
-    background-color: #ef4444;
-    width: 100px;
-    height: 40px;
+.contador strong {
+    color: #2563eb;
+    font-size: 16px;
 }
 
-#btn-deletar {
-    background-color: #ef4444;
+/* ===========================
+   BOTÕES
+=========================== */
+
+button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s ease;
 }
 
-#btn-editar {
-    background-color: #2563eb;
-}
-
-#btn-ordenar-asc {
-    background-color: #2563eb;
-    width: 120px;
-}
-
-#btn-ordenar-desc {
-    background-color: #2563eb;
-    width: 120px;
-}
-
-.logout .button {
-    background-color: #111827;
+/* Botão Editar */
+.btn-editar {
+    background-color: #3498db;
     color: white;
-    width: auto;
-    padding: 10px 25px;
 }
 
-.logout .button a {
+.btn-editar:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* Botão Excluir */
+.btn-excluir {
+    background-color: #e74c3c;
     color: white;
+}
+
+.btn-excluir:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+/* Organização dos botões lado a lado */
+.acoes {
+    display: flex;
+    gap: 8px;
+}
+
+/* ===========================
+   HEADER / CONTROLES
+=========================== */
+
+.header-topo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.header-topo h1 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.info-sessao {
+    font-size: 13px;
+    color: #4b5563;
+    text-align: right;
+}
+
+.info-sessao a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.info-sessao a:hover {
+    text-decoration: underline;
+}
+
+/* ===========================
+   BUSCA & ORDENAÇÃO
+=========================== */
+
+.form-busca {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.form-busca input[type="text"] {
+    flex: 1 1 220px;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
     font-size: 14px;
 }
 
-.logout .button:hover {
-    opacity: 0.9;
+.form-busca button {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: #2563eb;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.form-busca button:hover {
+    background-color: #1d4ed8;
     transform: translateY(-1px);
+}
+
+.btn-limpar {
+    padding: 10px 14px;
+    border: 1px solid #9ca3af;
+    border-radius: 8px;
+    color: #374151;
+    background-color: transparent;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease-in-out;
+}
+
+.btn-limpar:hover {
+    border-color: #6b7280;
+    color: #111827;
+    background-color: rgba(156, 163, 175, 0.15);
+    transform: translateY(-1px);
+}
+
+.ordenacao {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    margin-bottom: 18px;
+    color: #4b5563;
+}
+
+.btn-ordem {
+    padding: 6px 12px;
+    border-radius: 8px;
+    background-color: rgba(37, 99, 235, 0.12);
+    color: #1d4ed8;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s ease-in-out;
+}
+
+.btn-ordem:hover,
+.btn-ordem.ativo {
+    background-color: #2563eb;
+    color: white;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.badge-admin {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.badge-comum {
+    background-color: #dbeafe;
+    color: #1e40af;
 }
 
 .flash {
     padding: 12px;
-    margin-bottom: 20px;
-    border-radius: 8px;
+    margin-bottom: 18px;
+    border-radius: 10px;
     font-size: 14px;
     font-weight: 600;
     text-align: center;
@@ -220,4 +299,27 @@ tbody tr:last-child td {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 22px;
+    }
+
+    table {
+        font-size: 13px;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+
+    .form-busca {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ordenacao {
+        justify-content: flex-start;
+    }
 }
