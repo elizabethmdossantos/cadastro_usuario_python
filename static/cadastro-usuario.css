@@ -14,6 +14,14 @@ body {
     padding: 30px;
 }
 
+a {
+    display: block;
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+    font-weight: bold;
+}
+
 form {
     width: 100%;
     max-width: 420px;
@@ -54,23 +62,25 @@ input:focus {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
-/* wrapper para posicionar o ícone dentro do campo */
 .password-field {
     position: relative;
-}
-
-.password-field .toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
     display: flex;
     align-items: center;
 }
 
-.password-field .toggle-password svg {
-    display: block;
+.password-field input {
+    width: 100%;
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 button {

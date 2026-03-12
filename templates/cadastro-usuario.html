@@ -33,22 +33,12 @@
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" value="{{ form_data.email if form_data else ''}}">
-
+        
         <label for="senha">Senha:</label>
-        <div class="password-field">
-            <input type="password" id="senha" name="senha" required/>
-            <span id="toggleSenha" class="toggle-password" title="Mostrar senha">
-            <svg xmlns="http://www.w3.org/2000/svg&quot; width="20" height="20"
-                    viewBox="0 0 24 24" fill="none"
-                    stroke="#374151" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                </span>
-        </div>
+        <input type="password" id="senha" name="senha" value="{{ form_data.senha if form_data else '' }}" placeholder="Digite sua senha">
+        <br>
 
-         <label for="perfil">Perfil:</label>
+        <label for="perfil">Perfil:</label>
         <select id="perfil" name="perfil">
             <option value="comum"
                 {{ 'selected' if request.form.get('perfil', 'comum') == 'comum' else '' }}>
@@ -58,13 +48,14 @@
                 {{ 'selected' if request.form.get('perfil') == 'admin' else '' }}>
                 Admin
             </option>
-        </select>
+        </select><br><br>
 
-        <button type="submit">Cadastrar</button>
+        <button type="submit">Cadastrar</button><br><br>
         <a href="{{ url_for('home') }}">Voltar a página home</a>
     </form>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function(){
         const cpfInput = document.getElementById('cpf');
 
         cpfInput.addEventListener('input', function () {

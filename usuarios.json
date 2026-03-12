@@ -7,5 +7,14 @@
         "idade": 29,
         "senha": "scrypt:32768:8:1$dSZMdTL1DU6gLeHd$cc4893d5122a58fb01f410e5529b413baa8e56dda037081154e95f4ddf588d24a97f50f639a35b78ffb25684129088336ad73393d80129f183b4b6f8a7e46f0a",
         "perfil": "admin"
+    },
+    {
+        "id": "37a73cf2-3d8c-4c4e-ac8a-93ceaf43e6de",
+        "nome": "M\u00f4nica",
+        "cpf": "032.683.694-21",
+        "email": "monica@email.com",
+        "idade": 45,
+        "senha": "123456",
+        "perfil": "comum"
     }
 ]
