@@ -1,11 +1,15 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from werkzeug.security import generate_password_hash
+
+#Models
 from models.usuario import Usuario
-from models.session import SessaoUsuario
+from models.sessao_usuario import SessaoUsuario
 from models.service import UsuarioService
 
 app = Flask(__name__)
 app.secret_key = "chave-super-secreta"
+
+sessao = SessaoUsuario(session)
 service = UsuarioService()
 
 @app.route("/")
@@ -22,14 +26,6 @@ def cadastrar_usuario():
     email = request.form.get("email", "")
     idade = int(request.form.get("idade", 0))
     senha = request.form.get("senha", "")
-    
-    if idade < 18 or not service.validar_cpf_formato(cpf):
-        flash("Idade deve ser maior que 18 e CPF no formato correto (000.000.000-00).", "erro")
-        return redirect(url_for("cadastrar_usuario"))
-    
-    if service.cpf_existe(cpf):
-        flash("CPF já cadastrado.", "erro")
-        return redirect(url_for("cadastrar_usuario"))
 
     senha_hash = generate_password_hash(senha)
     usuario = Usuario(nome, cpf, email, idade, senha_hash)
@@ -70,7 +66,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    SessaoUsuario.limpar_session()
+    SessaoUsuario.limpar_session() #session.encerrar()
     flash("Logout realizado com sucesso.", "sucesso")
     return redirect(url_for("login"))
 
