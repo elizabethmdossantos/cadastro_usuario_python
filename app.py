@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from werkzeug.security import generate_password_hash
 from models.usuario import Usuario
 from models.session import SessaoUsuario
 from models.service import UsuarioService
@@ -23,18 +24,29 @@ def cadastrar_usuario():
     senha = request.form.get("senha", "")
     
     if idade < 18 or not service.validar_cpf_formato(cpf):
-        flash("Idade deve ser maior que 18 e CPF no formato correto.", "erro")
+        flash("Idade deve ser maior que 18 e CPF no formato correto (000.000.000-00).", "erro")
+        return redirect(url_for("cadastrar_usuario"))
+    
+    if service.cpf_existe(cpf):
+        flash("CPF já cadastrado.", "erro")
         return redirect(url_for("cadastrar_usuario"))
 
-    usuario = Usuario(nome, cpf, email, idade, senha)
-    if service.salvar_usuario(usuario.__dict__):
-        carregar_usuarios = service.carregar_usuarios()
-        flash("Usuário cadastrado com sucesso!", "sucesso")
-        return render_template("usuarios.html")
-    
-    flash("Erro ao cadastrar usuário.", "erro")
-    return redirect(url_for("cadastrar_usuario"))
+    senha_hash = generate_password_hash(senha)
+    usuario = Usuario(nome, cpf, email, idade, senha_hash)
 
+    if service.salvar_usuario(usuario.to_dict()):
+        sessao = SessaoUsuario(
+            usuario.id,
+            usuario.nome,
+            usuario.perfil
+        )
+        sessao.salvar_na_session()
+        
+        flash("Usuário cadastrado com sucesso!", "sucesso")
+        return redirect(url_for("buscar_usuarios"))
+    
+    flash("Erro ao salvar no arquivo.", "erro")
+    return redirect(url_for("cadastrar_usuario"))
     
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -92,32 +104,31 @@ def buscar_usuarios_json():
 def editar_usuario(cpf):
     sessao = SessaoUsuario.carregar_da_session()
     if not sessao:
-        flash("Não autorizado.", "erro")
         return redirect(url_for("login"))
     
-    usuario = service.buscar_por_cpf(cpf)
-    if not usuario:
+    usuarios = service.carregar_usuarios()
+    indice = next((i for i, u in enumerate(usuarios) if u["cpf"] == cpf), None)
+    
+    if indice is None:
         flash("Usuário não encontrado.", "erro")
         return redirect(url_for("buscar_usuarios"))
     
-    perfil_logado = sessao.perfil
-    eh_proprio = sessao.usuario_id == usuario["id"]
-    if perfil_logado != "admin" and not eh_proprio:
-        flash("Você só pode editar seu próprio perfil.", "erro")
+    if sessao.perfil != "admin" and sessao.usuario_id != usuarios[indice]["id"]:
+        flash("Permissão negada.", "erro")
         return redirect(url_for("buscar_usuarios"))
     
     if request.method == "GET":
-        return render_template("editar_usuario.html", usuario=usuario)
+        return render_template("editar_usuario.html", usuario=usuarios[indice])
     
-    usuario["nome"] = request.form.get("nome", "")
-    usuario["email"] = request.form.get("email", "")
-    usuario["idade"] = int(request.form.get("idade", 0))
+    usuarios[indice]["nome"] = request.form.get("nome", "")
+    usuarios[indice]["email"] = request.form.get("email", "")
+    usuarios[indice]["idade"] = int(request.form.get("idade", 0))
+    
     if request.form.get("senha"):
-        from werkzeug.security import generate_password_hash  # Import local
-        usuario["senha"] = generate_password_hash(request.form["senha"])
+        usuarios[indice]["senha"] = generate_password_hash(request.form["senha"])
     
-    service.salvar_todos(service.carregar_usuarios())
-    flash("Atualizado!", "sucesso")
+    service.salvar_todos(usuarios)
+    flash("Usuário atualizado!", "sucesso")
     return redirect(url_for("buscar_usuarios"))
 
 @app.route("/usuarios/deletar", methods=["POST"])
