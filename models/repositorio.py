@@ -34,8 +34,8 @@ class RepositorioUsuarios:
     def salvar(self, usuario: Usuario) -> bool:
         try:
             usuarios = self.listar()
-            usuario.append(usuario)
-            self._persistir(usuario)
+            usuarios.append(usuario)
+            self._persistir(usuarios)
             return True
         except Exception:
             return False
@@ -67,4 +67,4 @@ class RepositorioUsuarios:
 
         with open(self.ARQUIVO, "w", encoding="utf-8") as f:
             json.dump([u.to_dict() for u in usuarios], f, indent=4)
-
+            
