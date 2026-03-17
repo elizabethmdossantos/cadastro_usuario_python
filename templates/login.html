@@ -17,7 +17,7 @@
         {% endif %}
     {% endwith %}
 
-    <form method="POST" action="{{ url_for('login') }}">
+    <form method="POST" action="{{ url_for('auth.login') }}">
         <h1>Login</h1>
         <label for="cpf">CPF:</label>
         <input type="text" name="cpf" value="{{ form_data.cpf if form_data else '' }}" placeholder="000.000.000-00">
@@ -37,11 +37,11 @@
         </div><br><br>
 
         <button type="submit">Entrar</button><br><br>
-        <a href="{{ url_for('home') }}">Voltar a página home</a>
+        <a href="{{ url_for('auth.home') }}">Voltar a página home</a>
 
     </form>
     </div>
-     <script>
+    <script>
         const senhaInput = document.getElementById('senha');
         const toggle = document.getElementById('toggleSenha');
         const eyeIcon = toggle.querySelector('svg');

@@ -78,7 +78,7 @@ def login():
             session["usuario_nome"] = usuario.nome
             session["usuario_perfil"] = usuario.perfil
             flash(f"Bem-vindo, {usuario.nome}!", "sucesso")
-            return redirect(url_for("usuario.listar_usuarios"))
+        return redirect(url_for("usuario.listar_usuarios"))
 
     flash("CPF ou senha inválidos", "erro")
 

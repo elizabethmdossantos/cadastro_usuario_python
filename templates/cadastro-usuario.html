@@ -10,7 +10,7 @@
 
 <body>
 
-    <form action="/cadastro-usuario" method="POST">
+    <form action="{{ url_for('auth.cadastrar_usuario')}}" method="POST">
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -61,7 +61,7 @@
         </select><br><br>
 
         <button type="submit">Cadastrar</button><br><br>
-        <a href="{{ url_for('home') }}">Voltar a página home</a>
+        <a href="{{ url_for('auth.home') }}">Voltar a página home</a>
     </form>
 
     <script>

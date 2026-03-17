@@ -45,15 +45,15 @@ class RepositorioUsuarios:
             usuarios = self.listar()
             cpf_alvo = sanitizar_cpf(usuario_atualizado.cpf)
             for i, u in enumerate(usuarios):
-                if sanitizar_cpf(u.cpf) == cpf_alvo
-                usuarios[i] = usuario_atualizado
-                self._persistir(usuarios)
-                return True
+                if sanitizar_cpf(u.cpf) == cpf_alvo:
+                    usuarios[i] = usuario_atualizado
+                    self._persistir(usuarios)
+                    return True
             return False
         except Exception:
             return False
         
-    def deletar(self, cpf: str) --> bool:
+    def deletar(self, cpf: str) -> bool:
         try:
             cpf_limpo = sanitizar_cpf(cpf)
             usuarios = [u for u in self.listar()

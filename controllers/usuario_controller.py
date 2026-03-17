@@ -5,7 +5,7 @@ from models.repositorio import RepositorioUsuarios
 from utils.validacoes import sanitizar_cpf
 
 # Blueprint agrupa rotas relaconadas autenticiade
-usuario_bp = Blueprint("auth", __name__)
+usuario_bp = Blueprint("usuario", __name__)
 
 repo = RepositorioUsuarios()
 
@@ -52,7 +52,55 @@ def listar_usuarios_json():
         return jsonify({"erro" : "Não autorizado"}), 401
     
     usuarios = repo.listar()
-    return jsonify([u.to.dict() for u in usuarios])
+    return jsonify([u.to_dict() for u in usuarios])
+
+# Edição ---------------------
+@usuario_bp.route("/usuarios/editar<cpf>", methods=["GET", "POST"])
+def editar_usuario(cpf):
+    if not _usuario_logado():
+        flash("Não autorizado.", "erro")
+        return redirect(url_for("auth.login"))
+    
+    usuario = repo.buscar_por_cpf(cpf)
+
+    if not usuario:
+        flash("Usuário não encontrado", "erro")
+        return redirect(url_for("usuario.listar_usuarios"))
+    
+    # Permissão: adm edita qualquer um; comum edita o próprio
+    eh_proprio = session.get("usuario_id") == usuario.id
+    if not _eh_admin() and not eh_proprio:
+        flash("Você só pode editar seu próprio perfil", "erro")
+        return redirect(url_for("usuario.listar_usuarios"))
+    
+    if request.method == "GET":
+        return render_template("edita_usuario.html", usuario=usuario)
+    
+    # Atualizar dados
+    try:
+        idade = int(request.form.get("idade", 0))
+    except ValueError:
+        flash("Idade inválida", "erro")
+        return redirect(url_for("usuario.editar_usuario", cpf=cpf))
+    
+    if idade < 18:
+        flash("Usuário deve ser maior de 18 anos", "erro")
+        return redirect(url_for("usuario.editar_usuario", cpf=cpf))
+    
+    usuario.nome = request.form.get("nome", "").strip()
+    usuario.email = request.form.get("email", "").strip()
+    usuario.idade = idade
+
+    senha = request.form.get("senha", "")
+    if senha:
+        usuario.senha = generate_password_hash(senha)
+
+    if repo.atualizar(usuario):
+        flash("Usuário atualizado com sucesso", "sucesso")
+    else:
+        flash("Erro ao atualizar usuário", "erro")
+
+    return redirect(url_for("usuario.editar_usuario"))
 
 # Exclusão -------------------
 @usuario_bp.route("/usuarios/deletar", methods=["POST"])
