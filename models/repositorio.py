@@ -1,9 +1,26 @@
 import json
 import os
+from mysql connector import Error
 from models.usuario import Usuario
 from utils.validacoes import sanitizar_cpf
 
 class RepositorioUsuarios:
+
+    def __init__(self):
+        self.connection_config = {
+            'host': 'localhost',
+            'user': 'mickey',
+            'password': 'admin',
+            'database': 'crud_flask'
+        }
+
+    def _get_connection(self):
+        try:
+            connection = mysql.connecto.connect(**self.connection_config)
+            return connection
+        except Error as e:
+        print("Erro ao conectar mysql {e}")
+
 
     ARQUIVO = "usuarios.json"
 
