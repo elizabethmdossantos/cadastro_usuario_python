@@ -1,4 +1,5 @@
 import json
+
 from models.repositorio import RepositorioUsuarios
 from models.usuario import Usuario
 
