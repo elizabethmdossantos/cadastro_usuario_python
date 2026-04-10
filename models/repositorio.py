@@ -1,6 +1,7 @@
 import json
 import os
-from mysql connector import Error
+import mysql.connector
+from mysql.connector import Error
 from models.usuario import Usuario
 from utils.validacoes import sanitizar_cpf
 
@@ -16,10 +17,11 @@ class RepositorioUsuarios:
 
     def _get_connection(self):
         try:
-            connection = mysql.connecto.connect(**self.connection_config)
+            connection = mysql.connector.connect(**self.connection_config)
             return connection
         except Error as e:
-        print("Erro ao conectar mysql {e}")
+            print(f"Erro ao conectar mysql {e}")
+            return None
 
 
     ARQUIVO = "usuarios.json"

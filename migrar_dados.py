@@ -10,16 +10,16 @@ def migrar_dados():
         print("Arquivo usuarios.json não encontrado")
         return
     
-    repo = RepositorioUsuarios
+    repo = RepositorioUsuarios()
 
     for dados_usuario in dados_json:
-        usuario = Usuario.from.dict(dados_usuario)
+        usuario = Usuario.from_dict(dados_usuario)
         if repo.salvar(usuario):
             print(f"Usuario {usuario.nome} migrado com sucesso")
         else:
             print(f"Erro ao migrar usuário {usuario.nome}")
 
-        print("Migração concluída!")
+    print("Migração concluída!")
 
-    if __name__ == "__main__":
-        migrar_dados()
+if __name__ == "__main__":
+    migrar_dados()
