@@ -34,6 +34,7 @@ class Usuario:
                 usuario.nome = dados.get("nome", " ")
                 usuario.cpf = dados.get("cpf", " ")
                 usuario.email = dados.get("email", " ")
+                usuario.senha = dados.get("senha", " ")
                 usuario.idade = dados.get("idade", 0)
                 usuario.perfil = dados.get("perfil", "comum")
                 return usuario

@@ -78,8 +78,15 @@ class RepositorioUsuarios:
             cursor = connection.cursor()
             sql = """INSERT INTO usuarios (id, nome, cpf, email, idade, senha, perfil)
             VALUES(%s, %s, %s, %s, %s, %s, %s)"""
-            valores = (usuario.id, usuario.nome, usuario.cpf, usuario.email,
-                    usuario.idade, usuario.senha, usuario.perfil)
+            valores = (
+                usuario.id, 
+                usuario.nome, 
+                usuario.cpf, 
+                usuario.email,
+                usuario.idade, 
+                usuario.senha, 
+                usuario.perfil
+                )
             cursor.execute(sql, valores)
             connection.commit()
             return True
@@ -100,10 +107,16 @@ class RepositorioUsuarios:
         
         try:
             cursor = connection.cursor()
-            sql = """UPDATE usuarios SET nome=%s, cpf=%s, email+%s, idade=%s, senha=%s, perfil=%s
+            sql = """UPDATE usuarios SET nome=%s, cpf=%s, email=%s, idade=%s, senha=%s, perfil=%s
             WHERE cpf=%s """
-            valores = (usuario_atualizado.id, usuario_atualizado.nome, usuario_atualizado.cpf, usuario_atualizado.email,
-                    usuario_atualizado.idade, usuario_atualizado.senha, usuario_atualizado.perfil)
+            valores = (
+                        usuario_atualizado.nome,
+                        usuario_atualizado.cpf,
+                        usuario_atualizado.email,
+                        usuario_atualizado.idade,
+                        usuario_atualizado.senha,
+                        usuario_atualizado.perfil
+                )
             cursor.execute(sql, valores)
             connection.commit()         
             return cursor.rowcount > 0
@@ -125,7 +138,7 @@ class RepositorioUsuarios:
         try:
             cursor = connection.cursor()
             cpf_limpo = sanitizar_cpf(cpf)
-            cursor.execute("DELETE FROM usuarios WHERE cpf = %s", (cpf_limpo))
+            cursor.execute("DELETE FROM usuarios WHERE cpf = %s", (cpf_limpo,))
             connection.commit()
             return cursor.rowcount > 0
         except Error as e:
